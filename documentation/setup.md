@@ -1,6 +1,6 @@
 ## Install package
 ```bash
-pip install bs4
+pip install bs4 requests
 ```
 
-python version: 3.10
+python version: 3.11
