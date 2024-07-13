@@ -11,11 +11,12 @@ class ScraperURL():
         page from that url.
     '''
 
-    def __init__(self, url='https://pokemondb.net/pokedex/all', path=r'C:\Users\SERVIN\Desktop\Important local files\Data Analyst\scraped_data'):
+    def __init__(self, path='/data', url='https://pokemondb.net/pokedex/all'):
         self.url = url
+        # self.filepath = r'C:\Users\SERVIN\Desktop\Important local files\Data Analyst\data'
         self.filepath = path
         self.logger = self.get_logger()
-        # self.df = None
+        self.error_handler = 0
 
 
     def request_page(self):
@@ -24,9 +25,13 @@ class ScraperURL():
         '''
         try:
             page = requests.get(self.url)
-            self.soup = BeautifulSoup(page.text, 'html')
+            self.soup = BeautifulSoup(
+                page.text,
+                features='lxml'
+                )
         except Exception as e:
             self.get_logger().error(f'request_page() error: {e}')
+            self.error_handler += 1
 
     
     def find_table(self):
@@ -37,6 +42,7 @@ class ScraperURL():
             self.table = self.soup.find('table', class_ = "data-table sticky-header block-wide")
         except Exception as e:
             self.get_logger().error(f'find_table() error: {e}')
+            self.error_handler += 1
 
 
     def find_headers(self):
@@ -51,6 +57,7 @@ class ScraperURL():
 
         except Exception as e:
             self.get_logger().error(f'find_headers() error: {e}')
+            self.error_handler += 1
 
 
     def find_data_row(self):
@@ -61,7 +68,7 @@ class ScraperURL():
         try:
             columns_data = self.table.find_all('tr')   
 
-            for row in columns_data[1:0]:
+            for row in columns_data[1:]:
                 row_data = row.find_all('td')
                 indiv_row_data = [data.text.strip() for data in row_data]
 
@@ -70,6 +77,7 @@ class ScraperURL():
 
         except Exception as e:
             self.get_logger().error(f'find_data_row() error: {e}')
+            self.error_handler += 1
 
 
     def create_db_conn(self):
@@ -91,6 +99,7 @@ class ScraperURL():
         
         except sqlite3.OperationalError as err:
             self.get_logger().error(f'Cannot connect to database. Error: {e}')
+            self.error_handler += 1
 
 
     def load_df_to_csv(self):
@@ -98,10 +107,11 @@ class ScraperURL():
             Load data frame to csv.
         '''
         try:
-            self.df.to_csv(f'{self.filepath}\poke_index_data.csv', index = True)
+            self.df.to_csv(f'{self.filepath}\poke_index_data.csv', index = False)
 
         except Exception as e:
             self.get_logger().error(f'load_df_to_csv() error: {e}')
+            self.error_handler += 1
 
 
     def create_table_schema(self):
@@ -134,6 +144,7 @@ class ScraperURL():
 
         except Exception as e:
             self.get_logger().error(f'load_df_to_db() error: {e}')
+            self.error_handler += 1
 
 
     def get_logger(self):
@@ -148,7 +159,7 @@ class ScraperURL():
             
             # Create handlers
             c_handler = logging.StreamHandler()
-            f_handler = logging.FileHandler(f'{self.filepath}\scraper.log')
+            f_handler = logging.FileHandler('scraper.log')
             c_handler.setLevel(logging.DEBUG)
             f_handler.setLevel(logging.DEBUG)
             
@@ -178,7 +189,7 @@ class ScraperURL():
 
     def main(self):
         try:
-            self.get_logger().info("EXECUTING FILE...")
+            self.get_logger().info("EXECUTING FILE...\n")
             self.get_logger().info("Requesting page...")
             self.request_page()
 
@@ -188,6 +199,8 @@ class ScraperURL():
 
             self.get_logger().info("Collecting data...")
             self.find_data_row()
+
+            # print(self.df)
 
             self.get_logger().info("Converting data frame to csv...")
             self.load_df_to_csv()
@@ -201,7 +214,10 @@ class ScraperURL():
             self.get_logger().info("Converting data frame to db...")
             self.load_df_to_db()
 
-            self.get_logger().info("DONE!\n")
+            if self.error_handler == 0:
+                self.get_logger().info("DONE!\n")
+            else:
+                self.get_logger().error("THERE WAS AN ERROR!\n")
 
         except Exception as e:
             self.get_logger().error(f'main() error: {e}')
