@@ -14,7 +14,9 @@ The filepath used in the source code should be `'.\datasets'`. However, Windows 
 
 ## Snapshots:
 Saving and reading database with pandas (*from Jupyter Notebook*).
+<p align="center">
 <img src='documentation/read_from_db_with_pd.png'></img>
+</p>
 
 |Libraries used|PIP command|Description|
 |---|---|---|
