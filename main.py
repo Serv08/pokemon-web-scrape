@@ -3,6 +3,7 @@ import requests
 import pandas as pd
 import sqlite3
 import logging
+import sys
 
 
 class ScraperURL():
@@ -11,11 +12,14 @@ class ScraperURL():
         page from that url.
     '''
 
-    def __init__(self, url='https://pokemondb.net/pokedex/all', path=r'C:\Users\SERVIN\Desktop\Important local files\Data Analyst\scraped_data'):
+    # def __init__(self, path='/data', url='https://pokemondb.net/pokedex/all'):
+    def __init__(self, path, url):
         self.url = url
+        # self.filepath = r'C:\Users\SERVIN\Desktop\Important local files\Data Analyst\data'
         self.filepath = path
         self.logger = self.get_logger()
-        # self.df = None
+        self.error_handler = 0
+        self.recon_try = 0
 
 
     def request_page(self):
@@ -24,9 +28,13 @@ class ScraperURL():
         '''
         try:
             page = requests.get(self.url)
-            self.soup = BeautifulSoup(page.text, 'html')
+            self.soup = BeautifulSoup(
+                page.text,
+                features='lxml'
+                )
         except Exception as e:
             self.get_logger().error(f'request_page() error: {e}')
+            self.error_handler += 1
 
     
     def find_table(self):
@@ -37,6 +45,7 @@ class ScraperURL():
             self.table = self.soup.find('table', class_ = "data-table sticky-header block-wide")
         except Exception as e:
             self.get_logger().error(f'find_table() error: {e}')
+            self.error_handler += 1
 
 
     def find_headers(self):
@@ -51,6 +60,7 @@ class ScraperURL():
 
         except Exception as e:
             self.get_logger().error(f'find_headers() error: {e}')
+            self.error_handler += 1
 
 
     def find_data_row(self):
@@ -61,7 +71,7 @@ class ScraperURL():
         try:
             columns_data = self.table.find_all('tr')   
 
-            for row in columns_data[1:0]:
+            for row in columns_data[1:]:
                 row_data = row.find_all('td')
                 indiv_row_data = [data.text.strip() for data in row_data]
 
@@ -70,27 +80,31 @@ class ScraperURL():
 
         except Exception as e:
             self.get_logger().error(f'find_data_row() error: {e}')
+            self.error_handler += 1
 
 
     def create_db_conn(self):
         '''
-            Create connection with the database.
+            Create connection with the database. 
+            Uses recursion to perform multiple tries in connecting to database.
         '''
-        recon_try = 0
         try:
-            self.conn = sqlite3.connect(f'{self.filepath}\database.db')
+            self.conn = sqlite3.connect(f'{self.filepath}/database.db')
             self.cursor = self.conn.cursor()
 
         except Exception as e:
             self.get_logger().error(f'find_table() error: {e}')
-            recon_try += 1
-            self.get_logger().warning(f'RECONNECTING... ({recon_try} tries)')
-            self.create_db_conn()
-            if recon_try >= 5:
-                raise sqlite3.OperationalError
-        
-        except sqlite3.OperationalError as err:
+            self.recon_try += 1
+            self.get_logger().warning(f'RECONNECTING... ({self.recon_try} tries)')
+            
+            if self.recon_try < 5:
+                self.create_db_conn()
+            else:
+                raise ValueError
+
+        except ValueError as e:
             self.get_logger().error(f'Cannot connect to database. Error: {e}')
+            self.error_handler += 1
 
 
     def load_df_to_csv(self):
@@ -98,10 +112,11 @@ class ScraperURL():
             Load data frame to csv.
         '''
         try:
-            self.df.to_csv(f'{self.filepath}\poke_index_data.csv', index = True)
+            self.df.to_csv(f'{self.filepath}/poke_index_data.csv', index = False)
 
         except Exception as e:
             self.get_logger().error(f'load_df_to_csv() error: {e}')
+            self.error_handler += 1
 
 
     def create_table_schema(self):
@@ -134,6 +149,7 @@ class ScraperURL():
 
         except Exception as e:
             self.get_logger().error(f'load_df_to_db() error: {e}')
+            self.error_handler += 1
 
 
     def get_logger(self):
@@ -148,7 +164,7 @@ class ScraperURL():
             
             # Create handlers
             c_handler = logging.StreamHandler()
-            f_handler = logging.FileHandler(f'{self.filepath}\scraper.log')
+            f_handler = logging.FileHandler('scraper.log')
             c_handler.setLevel(logging.DEBUG)
             f_handler.setLevel(logging.DEBUG)
             
@@ -176,39 +192,56 @@ class ScraperURL():
         pass
 
 
-    def main(self):
-        try:
-            self.get_logger().info("EXECUTING FILE...")
-            self.get_logger().info("Requesting page...")
-            self.request_page()
+def main(argv):
+    file_path = './data'
+    url = 'https://pokemondb.net/pokedex/all'
 
-            self.get_logger().info("Collecting headers...")
-            self.find_table()
-            self.find_headers()
+    if '-p' in argv:
+        path_index = argv.index('-p') + 1
+        if path_index < len(argv):
+            file_path = argv[path_index]
+    
+    if '-u' in argv:
+        url_index = argv.index('-u') + 1
+        if url_index < len(argv):
+            url = argv[url_index]
 
-            self.get_logger().info("Collecting data...")
-            self.find_data_row()
+    scrap = ScraperURL(path=file_path, url=url)
+    print(file_path, url)
 
-            self.get_logger().info("Converting data frame to csv...")
-            self.load_df_to_csv()
+    try:
+        scrap.get_logger().info("EXECUTING FILE...\n")
+        scrap.get_logger().info("Requesting page...")
+        scrap.request_page()
 
-            self.get_logger().info("Creating db connection...")
-            self.create_db_conn()
+        scrap.get_logger().info("Collecting headers...")
+        scrap.find_table()
+        scrap.find_headers()
 
-            self.get_logger().info("Creating table schema...")
-            self.create_table_schema()
+        scrap.get_logger().info("Collecting data...")
+        scrap.find_data_row()
 
-            self.get_logger().info("Converting data frame to db...")
-            self.load_df_to_db()
+        scrap.get_logger().info("Converting data frame to csv...")
+        scrap.load_df_to_csv()
 
-            self.get_logger().info("DONE!\n")
+        scrap.get_logger().info("Creating db connection...")
+        scrap.create_db_conn()
 
-        except Exception as e:
-            self.get_logger().error(f'main() error: {e}')
+        scrap.get_logger().info("Creating table schema...")
+        scrap.create_table_schema()
+
+        scrap.get_logger().info("Converting data frame to db...")
+        scrap.load_df_to_db()
+
+        if scrap.error_handler == 0:
+            scrap.get_logger().info("DONE!")
+            scrap.get_logger().info(f"Data saved to {file_path}\n")
+        else:
+            scrap.get_logger().error("THERE WAS AN ERROR!\n")
+
+    except Exception as e:
+        scrap.get_logger().error(f'main() error: {e}')
 
 
-if __name__ == '__main__':
-    scrap = ScraperURL()
-    scrap.main()
-    scrap.conn.close()
-    scrap.get_logger().info("DB Connection closed!")
+if __name__ == "__main__":
+    main(sys.argv[1:])
