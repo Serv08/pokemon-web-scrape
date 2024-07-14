@@ -27,13 +27,13 @@ python3 main.py
 python3 main.py -p ./img
 ```
 
-<center><img src='img/runnin_with_flag.png'></center>
+<p align='center'><img src='img/runnin_with_flag.png'></p>
 
-<center><img src='img/proof.png'></center>
-<center><i>Saved data</i></center>
+<p align='center'><img src='img/proof.png'></p>
+<p align='center'><i>Saved data</i></p>
 
 ### Saving and reading database with pandas library (*from Jupyter Notebook*).
-<center><img src='img/read_from_db_with_pd.png'></img></center>
+<p align='center'><img src='img/read_from_db_with_pd.png'></img></p>
 
 
 ## Libraries
