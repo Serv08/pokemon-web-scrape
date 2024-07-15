@@ -35,6 +35,10 @@ python3 main.py -p ./img
 ### Saving and reading database with pandas library (*from Jupyter Notebook*).
 <p align='center'><img src='img/read_from_db_with_pd.png'></img></p>
 
+### Visualizations
+
+#### Top 10 Primary Types Distribution
+<p align='center'><img src='img/piechart.png'></p>
 
 ## Libraries
 
