@@ -35,10 +35,29 @@ python3 main.py -p ./img
 ### Saving and reading database with pandas library (*from Jupyter Notebook*).
 <p align='center'><img src='img/read_from_db_with_pd.png'></img></p>
 
-### Visualizations
+### Snapshots from database (*using SQLite*).
+Had to use `'append'` rather than `'replace'` for `if_exists=` argument to append DataFrame values in the database table. Using `'replace'` would lead to the data types of columns to be in `TEXT` forms and will not follow the table schema created by `self.create_table_schema()` function.
+```bash
+self.df.to_sql('pokemonData', self.conn, if_exists='append', index = False)
+```
+<p align='center'><img src='img/from_sqlite.png'></img></p>
+<p align='center'><img src='img/db_data.png'></img></p>
 
-#### Top 10 Primary Types Distribution
-<p align='center'><img src='img/piechart.png'></p>
+## Sample Visualizations
+
+### Top 10 Primary Types 
+Water type is the most common Pokemon type followed by Normal and Grass.
+<p align='center'><img src='img/horizontal_barchart.png'></p>
+
+### Attack Distribution
+Dragon type have the highest median distribution for attack. 
+<p align='center'><img src='img/atk_dist.png'></p>
+
+### Defense Distribution
+Steel type have the highest median distribution in terms of defense, followed by Rock type.
+<p align='center'><img src='img/def_dist.png'></p>
+
+
 
 ## Libraries
 
