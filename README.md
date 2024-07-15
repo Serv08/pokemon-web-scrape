@@ -16,7 +16,7 @@ This is a Scraping challenge of Pokemon Pokedex by Sir Josh.
 
 ~~The filepath used in the source code should be `'../data'`. However, Windows protects my directory for GitHub repositories, preventing changes from the path, hence, the filepath used is outside the location of my GitHub Repositories.~~
 
-When running the file in terminal, `-p` flag can be used to indicated to indicate the filepath where the `.db` and `.csv` file will be saved. The path is `./data` by default.
+When running the file in terminal, `-p` flag can be used to indicate the filepath where the `.db` and `.csv` file will be saved. The path is `./data` by default.
 
 #### Running the python script by default.
 ```bash
@@ -36,7 +36,7 @@ python3 main.py -p ./img
 <p align='center'><img src='img/read_from_db_with_pd.png'></img></p>
 
 ### Snapshots from database (*using SQLite*).
-Had to use `'append'` rather than `'replace'` for `if_exists=` argument to append DataFrame values in the database table. Using `'replace'` would lead to the data types of columns to be in `TEXT` forms and will not follow the table schema created by `self.create_table_schema()` function.
+Had to use `'append'` rather than `'replace'` for `if_exists=` argument when creating database from DataFrame to append DataFrame values in the database table. Using `'replace'` would lead to the data types of columns to be in `TEXT` forms and will not follow the table schema created by `self.create_table_schema()` function.
 ```bash
 self.df.to_sql('pokemonData', self.conn, if_exists='append', index = False)
 ```
