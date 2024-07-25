@@ -129,16 +129,16 @@ class ScraperURL():
             TODO: Automate creating schema using {self.check_table_data_types()}
         '''
         self.create_table = '''CREATE TABLE IF NOT EXISTS pokemonData(
-        '#' INTEGER NOT NULL,
-        Name VARCHAR(40) NOT NULL,
-        Type VARCHAR(40) NOT NULL,
-        Total INTEGER NOT NULL,
-        HP INTEGER NOT NULL,
-        Attack INTEGER NOT NULL,
-        Defense INTEGER NOT NULL,
-        'Sp. Atk' INTEGER NOT NULL,
-        'Sp. Def' INTEGER NOT NULL,
-        Speed INTEGER NOT NULL);
+        '#'         INTEGER NOT NULL,
+        Name        VARCHAR(40) NOT NULL,
+        Type        VARCHAR(40) NOT NULL,
+        Total       INTEGER NOT NULL,
+        HP          INTEGER NOT NULL,
+        Attack      INTEGER NOT NULL,
+        Defense     INTEGER NOT NULL,
+        'Sp. Atk'   INTEGER NOT NULL,
+        'Sp. Def'   INTEGER NOT NULL,
+        Speed       INTEGER NOT NULL);
         '''
 
 
