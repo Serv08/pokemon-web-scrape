@@ -186,6 +186,8 @@ def main(argv):
     print(file_path, url)
 
     try:
+
+        # TODO: COMPRESS INTO A SINGLE FUNCTION
         scrap.logger.info("EXECUTING FILE...\n")
         scrap.logger.info("Requesting page...")
         scrap.request_page()
@@ -197,15 +199,19 @@ def main(argv):
         scrap.logger.info("Collecting data...")
         scrap.find_data_row()
 
+        # TODO: SEPARATE FUNCTION
         scrap.logger.info("Converting data frame to csv...")
         scrap.load_df_to_csv()
 
+        # TODO: SEPARATE FUNCTION
         scrap.logger.info("Creating db connection...")
         scrap.create_db_conn()
 
+        # TODO: SEPARATE FUNCTION
         scrap.logger.info("Creating table schema...")
         scrap.create_table_schema()
 
+        # TODO: SEPARATE FUNCTION
         scrap.logger.info("Converting data frame to db...")
         scrap.load_df_to_db()
 
