@@ -1,3 +1,6 @@
+##  ETL Process
+<p align='center'><img src='img/ETL_Process_diagram.png'></p>
+
 ## Sample Visualizations (*with Matplotlib*)
 
 ### Top 10 Primary Types 
