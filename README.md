@@ -1,20 +1,38 @@
-# pokémon-web-scrape
+<img src='img\POKEMON_WEB_SCRAPE.png'>
+
+
+<div align='center'>
+
+[![GitHub Issues or Pull Requests](https://img.shields.io/github/issues/Serv08/pokemon-web-scrape)](https://github.com/Serv08/pokemon-web-scrape/issues)
+[![GitHub Issues or Pull Requests](https://img.shields.io/github/issues-pr/Serv08/pokemon-web-scrape)](https://github.com/Serv08/pokemon-web-scrape/pulls)
+![Static Badge](https://img.shields.io/badge/license-MIT-blue)
+
+
+</div>
+
+---
 ## [Sir Josh challenge](https://www.facebook.com/share/p/shSjfPoG5PaD6bnm/): Scraping data from the [Pokémon Pokédex](https://pokemondb.net/pokedex/all).
 
-This is a Scraping challenge of Pokemon Pokedex by Sir Josh.
 
-## Learning Objectives:
-- Learn to use web scraping tools using Python.
-- Learn how to work with database using Python and SQLite.
-- Learn creation of log files and error-handling code structure for loggings.
-- Learn to create visualization from database.
+This project aims to scrape data from a Pokémon Pokédex website which involves web scraping, data cleaning, and storing the data in an SQLite database.
+
+### Key Features:
+1. **Web Scraping**: Utilizes Python libraries such as requests and BeautifulSoup to extract data from a specified Pokémon Pokédex website.
+The scraper captures detailed information for each Pokémon, including name, type, stats, and other relevant attributes.
+
+2. **Data Cleaning and Transformation**: Uses pandas to clean and transform the scraped data into a tabular format.
+Handles data inconsistencies and ensures that all fields are correctly formatted for storage.
+
+3. **Database Integration**: Implements an SQLite database to store the processed data.
+The sqlite3 library is used to create tables and insert records, making the data easily accessible for querying and analysis.
+
+4. **Data Storage and Retrieval**: Provides functions to store the scraped data into an SQLite database and retrieve it for further analysis or usage.
 
 
-## Snapshots:
+
+## Usage:
 
 ### Execution of code in terminal
-
-~~The filepath used in the source code should be `'../data'`. However, Windows protects my directory for GitHub repositories, preventing changes from the path, hence, the filepath used is outside the location of my GitHub Repositories.~~
 
 When running the file in terminal, `-p` flag can be used to indicate the filepath where the `.db` and `.csv` file will be saved. The path is `./data` by default.
 
@@ -42,21 +60,6 @@ self.df.to_sql('pokemonData', self.conn, if_exists='append', index = False)
 ```
 <p align='center'><img src='img/from_sqlite.png'></img></p>
 <p align='center'><img src='img/db_data.png'></img></p>
-
-## Sample Visualizations
-
-### Top 10 Primary Types 
-Water type is the most common Pokemon type followed by Normal and Grass.
-<p align='center'><img src='img/horizontal_barchart.png'></p>
-
-### Attack Distribution
-Dragon type have the highest median distribution for attack. 
-<p align='center'><img src='img/atk_dist.png'></p>
-
-### Defense Distribution
-Steel type have the highest median distribution in terms of defense, followed by Rock type.
-<p align='center'><img src='img/def_dist.png'></p>
-
 
 
 ## Libraries
