@@ -1,4 +1,4 @@
-<img src='img\POKEMON_WEB_SCRAPE.png'>
+<p align="center"><img src='img\POKEMON_WEB_SCRAPE.png'></p>
 
 
 <div align='center'>
